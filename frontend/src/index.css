@@ -1,0 +1,691 @@
+﻿@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: #080b14;
+  color: #f8fafc;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* LANDING */
+
+.landing-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  background:
+    radial-gradient(circle at top, #211548 0, #080b14 45%),
+    #080b14;
+}
+
+.landing-card {
+  width: min(760px, 95vw);
+  padding: 55px;
+  text-align: center;
+  background: #111522;
+  border: 1px solid #282d3d;
+  border-radius: 24px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.35);
+}
+
+.landing-logo,
+.tc-logo {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #7c3aed;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.landing-logo {
+  margin: auto;
+}
+
+.landing-brand {
+  margin-top: 18px;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.landing-brand span,
+.tc-brand-name span,
+.candidate-heading span {
+  color: #a78bfa;
+}
+
+.landing-card h1 {
+  margin-top: 35px;
+  font-size: 36px;
+}
+
+.landing-card > p {
+  color: #9ca3af;
+  line-height: 1.7;
+}
+
+.role-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 35px;
+}
+
+.role-button {
+  padding: 22px;
+  text-align: left;
+  color: white;
+  background: #181c2a;
+  border: 1px solid #303548;
+  border-radius: 14px;
+}
+
+.role-button:hover {
+  border-color: #8b5cf6;
+}
+
+.role-button strong,
+.role-button small {
+  display: block;
+}
+
+.role-button small {
+  margin-top: 7px;
+  color: #9ca3af;
+}
+
+.primary-role {
+  background: #6d28d9;
+  border-color: #8b5cf6;
+}
+
+.landing-security {
+  margin-top: 28px;
+  color: #7f8798;
+  font-size: 13px;
+}
+
+/* INTERVIEWER */
+
+.tc-app {
+  min-height: 100vh;
+  background: #090c15;
+}
+
+.tc-header {
+  min-height: 76px;
+  padding: 14px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #242938;
+  background: #0d101a;
+}
+
+.tc-brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.tc-brand-name {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.tc-brand-subtitle {
+  color: #8991a2;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.tc-header-right {
+  display: flex;
+  gap: 35px;
+}
+
+.tc-header-right small,
+.tc-header-right strong {
+  display: block;
+}
+
+.tc-header-right small {
+  color: #777f91;
+  font-size: 11px;
+}
+
+.tc-header-right strong {
+  margin-top: 3px;
+}
+
+.green {
+  color: #34d399 !important;
+}
+
+.tc-stepbar {
+  display: flex;
+  justify-content: center;
+  gap: 45px;
+  padding: 20px;
+  border-bottom: 1px solid #1f2431;
+  color: #626b7d;
+}
+
+.tc-stepbar div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tc-stepbar span {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #202534;
+  font-size: 12px;
+}
+
+.tc-stepbar .active {
+  color: #c4b5fd;
+}
+
+.tc-stepbar .active span {
+  background: #7c3aed;
+  color: white;
+}
+
+.tc-content {
+  width: min(1200px, 94vw);
+  margin: 35px auto;
+}
+
+.tc-two-column {
+  display: grid;
+  grid-template-columns: 1.5fr .9fr;
+  gap: 25px;
+}
+
+.tc-card,
+.tc-preview-card,
+.tc-center-card {
+  background: #111522;
+  border: 1px solid #292f40;
+  border-radius: 18px;
+  padding: 28px;
+}
+
+.tc-card h1,
+.tc-center-card h1 {
+  margin-top: 0;
+}
+
+.tc-muted {
+  color: #8991a2;
+  line-height: 1.6;
+}
+
+.tc-card label {
+  display: block;
+  margin: 20px 0 8px;
+  color: #c4c9d4;
+  font-size: 14px;
+}
+
+.tc-card input,
+.tc-card select {
+  width: 100%;
+  padding: 13px 14px;
+  color: white;
+  background: #0b0f18;
+  border: 1px solid #303648;
+  border-radius: 9px;
+  outline: none;
+}
+
+.tc-card input:focus,
+.tc-card select:focus {
+  border-color: #8b5cf6;
+}
+
+.tc-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.tc-ai-toggle {
+  margin-top: 25px;
+  padding: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0b0f18;
+  border: 1px solid #292f40;
+  border-radius: 12px;
+}
+
+.tc-ai-toggle p {
+  margin: 5px 0 0;
+  color: #788194;
+  font-size: 12px;
+}
+
+.toggle {
+  width: 48px;
+  height: 26px;
+  padding: 3px;
+  border: 0;
+  border-radius: 20px;
+  background: #374151;
+}
+
+.toggle span {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  transition: .2s;
+}
+
+.toggle.on {
+  background: #7c3aed;
+}
+
+.toggle.on span {
+  transform: translateX(22px);
+}
+
+.tc-primary,
+.tc-secondary {
+  padding: 13px 20px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  color: white;
+  font-weight: 700;
+}
+
+.tc-primary {
+  background: #7c3aed;
+}
+
+.tc-primary:hover {
+  background: #6d28d9;
+}
+
+.tc-primary:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.tc-secondary {
+  background: transparent;
+  border-color: #394052;
+}
+
+.tc-preview h2 {
+  color: #a78bfa;
+  margin-top: 0;
+}
+
+.tc-preview-icon,
+.tc-success,
+.tc-camera-icon {
+  width: 70px;
+  height: 70px;
+  display: grid;
+  place-items: center;
+  margin: auto;
+  border-radius: 50%;
+  font-size: 30px;
+  background: #17211e;
+  color: #34d399;
+}
+
+.tc-preview-card h3 {
+  text-align: center;
+}
+
+.tc-preview-item,
+.info-row,
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid #252b39;
+}
+
+.tc-preview-item span,
+.info-row span,
+.setting-row span {
+  color: #7d8698;
+}
+
+.tc-included {
+  margin-top: 20px;
+  padding: 18px;
+  background: #0b0f18;
+  border-radius: 12px;
+}
+
+.tc-included p {
+  color: #aeb5c2;
+}
+
+.tc-center-card {
+  max-width: 850px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.tc-success {
+  background: #123026;
+}
+
+.tc-meeting-id {
+  position: relative;
+  margin: 30px 0;
+  padding: 25px;
+  background: #0b0f18;
+  border: 1px solid #3a2b65;
+  border-radius: 14px;
+}
+
+.tc-meeting-id small,
+.tc-meeting-id strong {
+  display: block;
+}
+
+.tc-meeting-id small {
+  color: #7e8799;
+}
+
+.tc-meeting-id strong {
+  margin-top: 8px;
+  font-size: 35px;
+  letter-spacing: 3px;
+  color: #a78bfa;
+}
+
+.tc-meeting-id button,
+.tc-link-box button {
+  padding: 8px 13px;
+  color: white;
+  background: #252a38;
+  border: 1px solid #3a4050;
+  border-radius: 7px;
+}
+
+.tc-link-box {
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  text-align: left;
+  background: #0b0f18;
+  border-radius: 12px;
+}
+
+.tc-link-box small,
+.tc-link-box strong {
+  display: block;
+}
+
+.tc-link-box small {
+  color: #7e8799;
+}
+
+.tc-link-box strong {
+  margin-top: 5px;
+  color: #a78bfa;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.tc-details {
+  margin-top: 25px;
+  text-align: left;
+}
+
+.tc-details p {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #242a37;
+}
+
+.tc-details span {
+  color: #7e8799;
+}
+
+.tc-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.tc-camera-icon {
+  background: #33205f;
+  color: #c4b5fd;
+}
+
+/* CANDIDATE */
+
+.candidate-page {
+  min-height: 100vh;
+  background: #f5f3ff;
+  color: #171522;
+}
+
+.candidate-header {
+  min-height: 70px;
+  padding: 12px 45px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-bottom: 1px solid #e5e1f1;
+}
+
+.encrypted {
+  color: #6d28d9;
+  font-size: 14px;
+}
+
+.candidate-content {
+  width: min(1250px, 94vw);
+  margin: 35px auto;
+}
+
+.candidate-heading {
+  margin-bottom: 25px;
+}
+
+.candidate-heading h1 {
+  font-size: 34px;
+  margin-bottom: 5px;
+}
+
+.candidate-heading p {
+  color: #6b6876;
+}
+
+.back-button {
+  margin-bottom: 15px;
+  border: 0;
+  background: transparent;
+  color: #6d28d9;
+}
+
+.candidate-grid {
+  display: grid;
+  grid-template-columns: 1.5fr .8fr;
+  gap: 25px;
+}
+
+.candidate-card {
+  margin-bottom: 20px;
+  padding: 24px;
+  background: white;
+  border: 1px solid #e6e1f0;
+  border-radius: 16px;
+  box-shadow: 0 7px 25px rgba(40,20,80,.05);
+}
+
+.candidate-card h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.camera-preview {
+  position: relative;
+  height: 390px;
+  overflow: hidden;
+  border-radius: 13px;
+  background: #15131d;
+}
+
+.camera-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-message {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #aaa;
+}
+
+.check-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px 0;
+  border-bottom: 1px solid #eeeaf4;
+}
+
+.check-item .check {
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.check-item strong,
+.check-item small {
+  display: block;
+}
+
+.check-item small {
+  margin-top: 4px;
+  color: #7c7886;
+}
+
+.join-area {
+  text-align: center;
+}
+
+.candidate-input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: white;
+  border: 1px solid #ddd7eb;
+  border-radius: 9px;
+  outline: none;
+}
+
+.candidate-input:focus {
+  border-color: #8b5cf6;
+}
+
+.candidate-error {
+  margin-bottom: 12px;
+  color: #dc2626;
+}
+
+.candidate-join {
+  width: 100%;
+  padding: 15px;
+  border: 0;
+  border-radius: 10px;
+  background: #7c3aed;
+  color: white;
+  font-weight: 700;
+}
+
+.join-area > small {
+  display: block;
+  margin-top: 12px;
+  color: #777281;
+}
+
+.info-row strong {
+  color: #6d28d9;
+}
+
+.setting-row {
+  flex-direction: column;
+  gap: 5px;
+}
+
+.setting-row strong {
+  color: #44414d;
+}
+
+@media (max-width: 850px) {
+  .tc-two-column,
+  .candidate-grid,
+  .role-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .tc-stepbar {
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .tc-header-right {
+    display: none;
+  }
+
+  .tc-header,
+  .candidate-header {
+    padding: 12px 20px;
+  }
+
+  .tc-link-box,
+  .tc-actions {
+    flex-direction: column;
+  }
+}
