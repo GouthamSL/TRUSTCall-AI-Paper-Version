@@ -1,78 +1,341 @@
-﻿import { useState } from "react";
-import Interviewer from "./pages/Interviewer";
-import Candidate from "./pages/Candidate";
+import { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 
-export default function App() {
-  const params = new URLSearchParams(window.location.search);
-  const meetingFromUrl = params.get("meeting") || "";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import RoleSelection from "./pages/RoleSelection";
+import CandidateDashboard from "./pages/CandidateDashboard";
 
-  const [role, setRole] = useState(
-    meetingFromUrl ? "candidate" : null
-  );
+import GenerateMeeting from "./pages/GenerateMeeting";
+import MeetingCreated from "./pages/MeetingCreated";
+import DeviceSetup from "./pages/DeviceSetup";
+import MeetingRoom from "./pages/MeetingRoom";
+import MeetingEnded from "./pages/MeetingEnded";
 
-  if (role === "interviewer") {
-    return (
-      <Interviewer
-        onBack={() => setRole(null)}
-      />
+import StartMeeting from "./pages/StartMeeting";
+import InterviewerMeetingRoom from "./pages/InterviewerMeetingRoom";
+
+/*
+=========================================================
+CANDIDATE MEETING ENTRY
+=========================================================
+
+When the candidate clicks the meeting link from email:
+
+/meeting/:meetingId
+
+we:
+
+1. Save the meeting ID
+2. Mark the user as Candidate
+3. Send the candidate to Candidate Dashboard
+
+This route is ONLY for candidates.
+*/
+
+function CandidateMeetingEntry() {
+  const { meetingId } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!meetingId) {
+      console.error("❌ No meeting ID found");
+
+      navigate("/candidate/dashboard", {
+        replace: true,
+      });
+
+      return;
+    }
+
+    console.log(
+      "📩 Candidate opened meeting link:",
+      meetingId
     );
-  }
 
-  if (role === "candidate") {
-    return (
-      <Candidate
-        initialMeetingId={meetingFromUrl}
-        onBack={() => setRole(null)}
-      />
+    // -------------------------------------------------
+    // Store meeting ID
+    // -------------------------------------------------
+
+    localStorage.setItem(
+      "pendingMeetingId",
+      meetingId
     );
-  }
+
+    sessionStorage.setItem(
+      "pendingMeetingId",
+      meetingId
+    );
+
+    // -------------------------------------------------
+    // Candidate email links are ALWAYS Candidate
+    // -------------------------------------------------
+
+    localStorage.setItem(
+      "role",
+      "Candidate"
+    );
+
+    sessionStorage.setItem(
+      "role",
+      "Candidate"
+    );
+
+    console.log(
+      "👤 Candidate role stored"
+    );
+
+    console.log(
+      "🆔 Pending Meeting ID:",
+      meetingId
+    );
+
+    // -------------------------------------------------
+    // Go to Candidate Dashboard
+    // -------------------------------------------------
+
+    navigate(
+      `/candidate/dashboard?meetingId=${encodeURIComponent(
+        meetingId
+      )}`,
+      {
+        replace: true,
+      }
+    );
+  }, [meetingId, navigate]);
 
   return (
-    <div className="landing-page">
+    <div className="min-h-screen flex items-center justify-center bg-[#111827] text-white">
+      <div className="text-center">
 
-      <div className="landing-card">
-
-        <div className="landing-logo">
-          ◆
+        <div className="text-2xl font-bold mb-3">
+          TRUSTCall AI
         </div>
 
-        <div className="landing-brand">
-          TRUSTCall <span>AI</span>
-        </div>
-
-        <h1>Trusted Communication for Online Interviews</h1>
-
-        <p>
-          Secure browser-based interviews with real-time
-          communication and AI-powered authenticity monitoring.
-        </p>
-
-        <div className="role-buttons">
-
-          <button
-            className="role-button primary-role"
-            onClick={() => setRole("interviewer")}
-          >
-            <strong>Interviewer</strong>
-            <small>Create and manage an interview</small>
-          </button>
-
-          <button
-            className="role-button"
-            onClick={() => setRole("candidate")}
-          >
-            <strong>Candidate</strong>
-            <small>Join an interview using a Meeting ID</small>
-          </button>
-
-        </div>
-
-        <div className="landing-security">
-          🔒 End-to-End Encrypted &nbsp; • &nbsp; WebRTC Communication
+        <div className="text-gray-300">
+          Preparing your interview...
         </div>
 
       </div>
-
     </div>
   );
 }
+
+
+/*
+=========================================================
+INTERVIEWER MEETING ENTRY
+=========================================================
+
+The interviewer uses:
+
+/interviewer-meeting/:meetingId
+
+This route explicitly establishes the Interviewer role
+so stale Candidate storage cannot affect the interviewer.
+*/
+
+function InterviewerMeetingEntry() {
+  const { meetingId } = useParams();
+
+  useEffect(() => {
+    if (!meetingId) {
+      console.error(
+        "❌ No interviewer meeting ID found"
+      );
+
+      return;
+    }
+
+    // -------------------------------------------------
+    // Explicitly establish Interviewer role
+    // -------------------------------------------------
+
+    localStorage.setItem(
+      "role",
+      "Interviewer"
+    );
+
+    sessionStorage.setItem(
+      "role",
+      "Interviewer"
+    );
+
+    // -------------------------------------------------
+    // Store meeting ID
+    // -------------------------------------------------
+
+    localStorage.setItem(
+      "pendingMeetingId",
+      meetingId
+    );
+
+    sessionStorage.setItem(
+      "pendingMeetingId",
+      meetingId
+    );
+
+    console.log(
+      "🎤 Interviewer opened meeting:",
+      meetingId
+    );
+
+    console.log(
+      "👤 Interviewer role stored"
+    );
+
+  }, [meetingId]);
+
+  return (
+    <InterviewerMeetingRoom />
+  );
+}
+
+
+/*
+=========================================================
+MAIN APP
+=========================================================
+*/
+
+function App() {
+  return (
+    <Router>
+
+      <Routes>
+
+        {/* =================================================
+            AUTHENTICATION
+        ================================================= */}
+
+        <Route
+          path="/"
+          element={<Login />}
+        />
+
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/signup"
+          element={<Signup />}
+        />
+
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
+
+
+        {/* =================================================
+            ROLE SELECTION
+        ================================================= */}
+
+        <Route
+          path="/select-role"
+          element={<RoleSelection />}
+        />
+
+
+        {/* =================================================
+            CANDIDATE DASHBOARD
+        ================================================= */}
+
+        <Route
+          path="/candidate/dashboard"
+          element={<CandidateDashboard />}
+        />
+
+
+        {/* =================================================
+            INTERVIEWER
+        ================================================= */}
+
+        <Route
+          path="/generate-meeting"
+          element={<GenerateMeeting />}
+        />
+
+        <Route
+          path="/meeting-created"
+          element={<MeetingCreated />}
+        />
+
+        <Route
+          path="/start-meeting"
+          element={<StartMeeting />}
+        />
+
+
+        {/* =================================================
+            INTERVIEWER MEETING
+        ================================================= */}
+
+        <Route
+          path="/interviewer-meeting/:meetingId"
+          element={<InterviewerMeetingEntry />}
+        />
+
+        {/* Compatibility route */}
+
+        <Route
+          path="/interviewer-meeting"
+          element={<InterviewerMeetingRoom />}
+        />
+
+
+        {/* =================================================
+            DEVICE SETUP
+        ================================================= */}
+
+        <Route
+          path="/device-setup/:meetingId"
+          element={<DeviceSetup />}
+        />
+
+
+        {/* =================================================
+            CANDIDATE EMAIL MEETING LINK
+        ================================================= */}
+
+        <Route
+          path="/meeting/:meetingId"
+          element={<CandidateMeetingEntry />}
+        />
+
+
+        {/* =================================================
+            ACTUAL CANDIDATE MEETING ROOM
+        ================================================= */}
+
+        <Route
+          path="/meeting-room/:meetingId"
+          element={<MeetingRoom />}
+        />
+
+
+        {/* =================================================
+            MEETING END
+        ================================================= */}
+
+        <Route
+          path="/meeting-ended"
+          element={<MeetingEnded />}
+        />
+
+      </Routes>
+
+    </Router>
+  );
+}
+
+export default App;

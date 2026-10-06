@@ -16,11 +16,14 @@
 // 12. AI backend proxy
 // ============================================================
 
+require("dotenv").config();
+
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const crypto = require("crypto");
+const path = require("path");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
 
@@ -2460,23 +2463,53 @@ io.on(
 
 
 // ============================================================
-// FRONTEND SPA PROXY
+// FRONTEND STATIC BUILD
 // ============================================================
-// IMPORTANT:
-// Do NOT use ws:true here.
-// Socket.IO handles its own WebSocket upgrades.
+// Serve the built React application directly from Node.
+//
+// Public flow:
+// ngrok -> Node :3002 -> frontend/dist
+//
+// This prevents the public meeting page from depending on
+// the Vite development server and its HMR WebSocket.
 // ============================================================
+
+const FRONTEND_DIST = path.join(
+    __dirname,
+    "..",
+    "frontend",
+    "dist"
+);
 
 app.use(
-    "/",
-    createProxyMiddleware({
-
-        target:
-            FRONTEND_URL,
-
-        changeOrigin: true
-    })
+    express.static(FRONTEND_DIST)
 );
+
+// React Router fallback.
+//
+// API, AI and Socket.IO requests continue to their
+// existing handlers.
+app.use((req, res, next) => {
+
+    if (req.method !== "GET") {
+        return next();
+    }
+
+    if (
+        req.path.startsWith("/api") ||
+        req.path.startsWith("/ai") ||
+        req.path.startsWith("/socket.io")
+    ) {
+        return next();
+    }
+
+    res.sendFile(
+        path.join(
+            FRONTEND_DIST,
+            "index.html"
+        )
+    );
+});
 
 
 // ============================================================

@@ -1,25 +1,17 @@
-const API_URL = "http://127.0.0.1:8000";
+﻿import axios from "axios";
 
-export async function analyzeFrame(image) {
-  try {
-    const response = await fetch(`${API_URL}/live-analyze`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        image: image,
-      }),
-    });
+const API_URL =
+  import.meta.env.VITE_COMMUNICATION_URL ||
+  "https://sublime-succulent-relenting.ngrok-free.dev";
 
-    if (!response.ok) {
-      throw new Error(`HTTP Error: ${response.status}`);
-    }
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
+  },
+  timeout: 20000,
+});
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Backend Error:", error);
-    return null;
-  }
-}
+export default api;
+

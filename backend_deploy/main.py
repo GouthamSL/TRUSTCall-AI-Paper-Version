@@ -1,8 +1,7 @@
-from fastapi import FastAPI, Body
+﻿from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
 
 from agents.vision_agent import VisionAgent
-from audio.audio_agent import AudioAgent
 from agents.consensus_agent import ConsensusAgent
 
 import cv2
@@ -60,9 +59,6 @@ print("Loading Vision Agent...")
 
 vision_agent = VisionAgent()
 
-print("Loading Audio Agent...")
-
-audio_agent = AudioAgent()
 
 print("Loading Consensus Agent...")
 
@@ -605,7 +601,6 @@ def home():
         "status": "active",
         "agents": [
             "VisionAgent",
-            "AudioAgent",
             "ConsensusAgent"
         ]
     }
@@ -621,7 +616,6 @@ def health():
     return {
         "status": "healthy",
         "vision_agent": True,
-        "audio_agent": True,
         "consensus_agent": True
     }
 
@@ -630,12 +624,20 @@ def health():
 # ORIGINAL VISION-ONLY ENDPOINT
 # ============================================================
 
+# ============================================================
+# VISION + CONSENSUS LIVE ANALYSIS
+# ============================================================
+
 @app.post("/live-analyze")
 async def live_analyze(
     data: dict = Body(...)
 ):
 
     try:
+
+        # ----------------------------------------------------
+        # 1. RECEIVE CAMERA IMAGE
+        # ----------------------------------------------------
 
         image_data = data["image"]
 
@@ -660,6 +662,10 @@ async def live_analyze(
             cv2.IMREAD_COLOR
         )
 
+        # ----------------------------------------------------
+        # 2. VALIDATE FRAME
+        # ----------------------------------------------------
+
         if frame is None:
 
             return {
@@ -667,212 +673,102 @@ async def live_analyze(
                 "faces_detected": 0
             }
 
-        result = vision_agent.analyze_frame(
+        # ----------------------------------------------------
+        # 3. VISION AGENT
+        # ----------------------------------------------------
+
+        print()
+        print("============================================================")
+        print("VISION AGENT ANALYSIS")
+        print("============================================================")
+
+        vision_result = vision_agent.analyze_frame(
             frame
         )
+
+        print("Vision Result:")
+        print(vision_result)
+
+        # ----------------------------------------------------
+        # 4. CONSENSUS AGENT
+        # ----------------------------------------------------
+
+        print()
+        print("============================================================")
+        print("CONSENSUS AGENT ANALYSIS")
+        print("============================================================")
+
+        consensus_result = consensus_agent.analyze(
+            vision_result
+        )
+
+        print("Consensus Result:")
+        print(consensus_result)
+
+        # ----------------------------------------------------
+        # 5. COMBINE RESULTS
+        # ----------------------------------------------------
+
+        result = dict(
+            vision_result
+        )
+
+        result["consensus"] = consensus_result
+
+        result["final_trust_score"] = (
+            consensus_result.get(
+                "final_trust_score"
+            )
+        )
+
+        result["liveness_status"] = (
+            consensus_result.get(
+                "status"
+            )
+        )
+
+        # ----------------------------------------------------
+        # 6. FINAL RESULT LOG
+        # ----------------------------------------------------
+
+        print()
+        print("============================================================")
+        print("FINAL TRUSTCALL AI RESULT")
+        print("============================================================")
+
+        print(
+            f"Final Trust Score: "
+            f"{result['final_trust_score']}"
+        )
+
+        print(
+            f"Liveness Status: "
+            f"{result['liveness_status']}"
+        )
+
+        print("============================================================")
+
+        # ----------------------------------------------------
+        # 7. RETURN RESULT
+        # ----------------------------------------------------
 
         return result
 
     except Exception as error:
 
+        print()
+        print("============================================================")
+        print("LIVE ANALYSIS ERROR")
+        print("============================================================")
+
+        print(error)
+
+        print("============================================================")
+
         return {
             "status": "ERROR",
             "message": str(error)
         }
-
-
-# ============================================================
-# MULTIMODAL LIVE ANALYSIS
-# ============================================================
-
-@app.post("/live-multimodal")
-async def live_multimodal(
-    data: dict = Body(...)
-):
-
-    try:
-
-        session_id = data.get(
-            "session_id",
-            "default"
-        )
-
-        image_data = data.get(
-            "image"
-        )
-
-        audio_data = data.get(
-            "audio"
-        )
-
-        sample_rate = int(
-            data.get(
-                "sample_rate",
-                16000
-            )
-        )
-
-
-        # ====================================================
-        # GET SESSION
-        # ====================================================
-
-        session = get_session(
-            session_id
-        )
-
-
-        # ====================================================
-        # DECODE VIDEO FRAME
-        # ====================================================
-
-        frame = None
-
-        if image_data:
-
-            if "," in image_data:
-
-                image_data = image_data.split(
-                    ",",
-                    1
-                )[1]
-
-            image_bytes = base64.b64decode(
-                image_data
-            )
-
-            np_arr = np.frombuffer(
-                image_bytes,
-                np.uint8
-            )
-
-            frame = cv2.imdecode(
-                np_arr,
-                cv2.IMREAD_COLOR
-            )
-
-
-        # ====================================================
-        # STORE FRAME
-        # ====================================================
-
-        if frame is not None:
-
-            session["frames"].append(
-                frame
-            )
-
-            if len(
-                session["frames"]
-            ) > 100:
-
-                session["frames"] = (
-                    session["frames"][-100:]
-                )
-
-
-        # ====================================================
-        # RUN VISION
-        # ====================================================
-
-        vision_result = None
-
-        if frame is not None:
-
-            vision_result = (
-                vision_agent.analyze_frame(
-                    frame
-                )
-            )
-
-
-        # ====================================================
-        # AUDIO
-        # ====================================================
-
-        audio_result = None
-
-        if audio_data:
-
-            try:
-
-                audio_bytes = base64.b64decode(
-                    audio_data
-                )
-
-                audio = np.frombuffer(
-                    audio_bytes,
-                    dtype=np.float32
-                ).copy()
-
-                if len(audio) > 0:
-
-                    audio_result = (
-                        audio_agent.process_multimodal(
-                            audio=audio,
-                            frames=session["frames"],
-                            sample_rate=sample_rate
-                        )
-                    )
-
-            except Exception as audio_error:
-
-                audio_result = {
-
-                    "agent": "audio",
-
-                    "audio_status": "ERROR",
-
-                    "voice_status": "ERROR",
-
-                    "av_status": "ERROR",
-
-                    "audio_trust_score": None,
-
-                    "error": str(audio_error)
-                }
-
-
-        # ====================================================
-        # CONSENSUS
-        # ====================================================
-
-        consensus_result = (
-            consensus_agent.analyze(
-                vision_result=vision_result,
-                audio_result=audio_result
-            )
-        )
-
-
-        # ====================================================
-        # RESPONSE
-        # ====================================================
-
-        response = {
-
-            "timestamp": time.time(),
-
-            "vision": vision_result,
-
-            "audio": audio_result,
-
-            "consensus": consensus_result
-        }
-
-
-        return response
-
-
-    except Exception as error:
-
-        return {
-
-            "status": "ERROR",
-
-            "message": str(error)
-        }
-
 
 # ============================================================
 # RESET SESSION
@@ -899,3 +795,8 @@ async def reset_session(
 
         "session_id": session_id
     }   
+
+
+
+
+
